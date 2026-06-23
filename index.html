@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>چــو مــصــر - حاسبة المجموع</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float 15s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .brand {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeInDown 1s ease;
+        }
+
+        .brand h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 0 0 30px rgba(100, 200, 255, 0.5), 0 0 60px rgba(100, 200, 255, 0.3);
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #00d4ff, #7b2ff7, #00d4ff);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 3s linear infinite;
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        .brand p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1rem;
+            margin-top: 5px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            animation: fadeInUp 1s ease 0.3s both;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 18px 20px;
+            font-size: 1.3rem;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            background: rgba(0, 0, 0, 0.2);
+            color: #ffffff;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .input-wrapper input:focus {
+            border-color: #00d4ff;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .input-wrapper input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 400;
+        }
+
+        .btn-calculate {
+            width: 100%;
+            padding: 18px;
+            font-size: 1.2rem;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            color: #ffffff;
+            background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0, 212, 255, 0.4);
+        }
+
+        .btn-calculate:active {
+            transform: translateY(0);
+        }
+
+        .btn-calculate::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .result-section {
+            margin-top: 30px;
+            display: none;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .result-section.active {
+            display: block;
+        }
+
+        .percentage-display {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .percentage-value {
+            font-size: 4rem;
+            font-weight: 900;
+            line-height: 1;
+            background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: none;
+        }
+
+        .percentage-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1rem;
+            margin-top: 5px;
+        }
+
+        .grade-display {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 15px 25px;
+            border-radius: 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeInUp 0.5s ease 0.3s both;
+        }
+
+        .grade-label {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .grade-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .grade-symbol {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-right: 8px;
+            padding: 2px 10px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .grade-excellent-high { color: #00ff88; text-shadow: 0 0 20px rgba(0, 255, 136, 0.4); }
+        .grade-excellent { color: #00e5a0; text-shadow: 0 0 20px rgba(0, 229, 160, 0.4); }
+        .grade-very-good-high { color: #00d4ff; text-shadow: 0 0 20px rgba(0, 212, 255, 0.4); }
+        .grade-very-good { color: #4facfe; text-shadow: 0 0 20px rgba(79, 172, 254, 0.4); }
+        .grade-good-high { color: #a78bfa; text-shadow: 0 0 20px rgba(167, 139, 250, 0.4); }
+        .grade-good { color: #c084fc; text-shadow: 0 0 20px rgba(192, 132, 252, 0.4); }
+        .grade-acceptable-high { color: #fbbf24; text-shadow: 0 0 20px rgba(251, 191, 36, 0.4); }
+        .grade-acceptable { color: #f59e0b; text-shadow: 0 0 20px rgba(245, 158, 11, 0.4); }
+        .grade-fail { color: #ff6b6b; text-shadow: 0 0 20px rgba(255, 107, 107, 0.4); }
+
+        .progress-ring {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .progress-ring svg {
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.1);
+            stroke-width: 8;
+        }
+
+        .progress-ring-fill {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1.5s ease;
+        }
+
+        .message-card {
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .message-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0.1;
+            border-radius: 20px;
+        }
+
+        .message-card.excellent-high, .message-card.excellent {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+        .message-card.excellent-high::before, .message-card.excellent::before {
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+        }
+
+        .message-card.very-good-high, .message-card.very-good {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+        .message-card.very-good-high::before, .message-card.very-good::before {
+            background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+        }
+
+        .message-card.good-high, .message-card.good {
+            background: rgba(167, 139, 250, 0.1);
+            border: 1px solid rgba(167, 139, 250, 0.3);
+        }
+        .message-card.good-high::before, .message-card.good::before {
+            background: linear-gradient(135deg, #a78bfa, #c084fc);
+        }
+
+        .message-card.acceptable-high, .message-card.acceptable {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+        .message-card.acceptable-high::before, .message-card.acceptable::before {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        }
+
+        .message-card.fail {
+            background: rgba(255, 50, 100, 0.1);
+            border: 1px solid rgba(255, 50, 100, 0.3);
+        }
+        .message-card.fail::before {
+            background: linear-gradient(135deg, #ff3264, #ff6b00);
+        }
+
+        .message-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .message-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .message-card.excellent-high .message-title, .message-card.excellent .message-title { color: #00ff88; }
+        .message-card.very-good-high .message-title, .message-card.very-good .message-title { color: #00d4ff; }
+        .message-card.good-high .message-title, .message-card.good .message-title { color: #a78bfa; }
+        .message-card.acceptable-high .message-title, .message-card.acceptable .message-title { color: #fbbf24; }
+        .message-card.fail .message-title { color: #ff6b6b; }
+
+        .message-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.9);
+            position: relative;
+            z-index: 1;
+        }
+
+        .confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            overflow: hidden;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            animation: confetti-fall 3s ease-out forwards;
+        }
+
+        @keyframes confetti-fall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        .footer-brand {
+            text-align: center;
+            margin-top: 30px;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.9rem;
+            animation: fadeIn 1s ease 0.6s both;
+        }
+
+        .footer-brand strong {
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 700;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 480px) {
+            .brand h1 { font-size: 2.2rem; }
+            .card { padding: 25px; }
+            .percentage-value { font-size: 3rem; }
+            .grade-value { font-size: 1.4rem; }
+            .grade-symbol { font-size: 1.1rem; }
+            .message-title { font-size: 1.3rem; }
+            .message-text { font-size: 1rem; }
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    <div class="confetti" id="confetti"></div>
+
+    <div class="container">
+        <div class="brand">
+            <h1>چــو مــصــر</h1>
+            <p>حاسبة المجموع للفرقة الثالثة</p>
+        </div>
+
+        <div class="card">
+            <div class="input-group">
+                <label for="score">أدخل مجموع النتيجة</label>
+                <div class="input-wrapper">
+                    <input type="number" id="score" placeholder="مثال: 320" min="0" max="400" step="0.01">
+                </div>
+            </div>
+
+            <button class="btn-calculate" onclick="calculate()">احسب النسبة المئوية</button>
+
+            <div class="result-section" id="resultSection">
+                <div class="percentage-display">
+                    <div class="percentage-value" id="percentageValue">0%</div>
+                    <div class="percentage-label">النسبة المئوية</div>
+                </div>
+
+                <div class="grade-display" id="gradeDisplay">
+                    <div class="grade-label">التقدير</div>
+                    <div class="grade-value" id="gradeValue">-</div>
+                </div>
+
+                <div class="progress-ring">
+                    <svg width="160" height="160">
+                        <circle class="progress-ring-bg" cx="80" cy="80" r="70"></circle>
+                        <circle class="progress-ring-fill" id="progressRing" cx="80" cy="80" r="70"
+                            stroke-dasharray="440"
+                            stroke-dashoffset="440"
+                            stroke="url(#grad)">
+                        </circle>
+                        <defs>
+                            <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#00d4ff"/>
+                                <stop offset="100%" style="stop-color:#7b2ff7"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+
+                <div class="message-card" id="messageCard">
+                    <span class="message-icon" id="messageIcon"></span>
+                    <div class="message-title" id="messageTitle"></div>
+                    <div class="message-text" id="messageText"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-brand">
+            <strong>چــو مــصــر</strong> — أتمنى لكم التوفيق دائماً
+        </div>
+    </div>
+
+    <script>
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+            particle.style.opacity = Math.random() * 0.5;
+            particlesContainer.appendChild(particle);
+        }
+
+        function getGrade(percentage) {
+            if (percentage >= 95) {
+                return { grade: 'ممتاز مرتفع', symbol: 'A+', class: 'grade-excellent-high', cardClass: 'excellent-high', icon: '🏆', title: 'إبداع بلا حدود!', text: 'أداءك خارق! إنت نموذج للتفوق والتميز. استمر في إلهام كل من حولك، مستقبلك مشرق جداً!' };
+            } else if (percentage >= 90) {
+                return { grade: 'ممتاز', symbol: 'A', class: 'grade-excellent', cardClass: 'excellent', icon: '🎉', title: 'مبروك! أداء ممتاز', text: 'أنت نجم حقيقي! جهودك وتفانيك واضحين، وده بيأكد إنك تقدر تحقق أي هدف تحطه قدامك. استمر في التميز وافتخر بنفسك!' };
+            } else if (percentage >= 85) {
+                return { grade: 'جيد جداً مرتفع', symbol: 'B+', class: 'grade-very-good-high', cardClass: 'very-good-high', icon: '⭐', title: 'برافو! ناجح بامتياز', text: 'أداءك ممتاز جداً! إنت ناجح وبتثبت إنك قادر تتفوق. كمل على نفس المنوال وإن شاء الله مستقبلك هيكون أحلى.' };
+            } else if (percentage >= 80) {
+                return { grade: 'جيد جداً', symbol: 'B', class: 'grade-very-good', cardClass: 'very-good', icon: '✨', title: 'أحسنت! أداء رائع', text: 'مجهودك مثمر ونتيجتك كويسة جداً. مع شوية تركيز أكتر تقدر توصل للممتاز. إنت قادر!' };
+            } else if (percentage >= 75) {
+                return { grade: 'جيد مرتفع', symbol: 'C+', class: 'grade-good-high', cardClass: 'good-high', icon: '💪', title: 'أحسنت! ناجح', text: 'مبروك النجاح! أداءك كويس، ومع شوية مجهود إضافي تقدر توصل لأعلى. دايماً في مجال للتحسن، وإنت قادر.' };
+            } else if (percentage >= 70) {
+                return { grade: 'جيد', symbol: 'C', class: 'grade-good', cardClass: 'good', icon: '👍', title: 'مبروك النجاح', text: 'نجحت! ده إنجاز يستحق التقدير. حاول تشتغل أكتر في المرحلة الجاية وإن شاء الله تتحسن أكتر وأكتر.' };
+            } else if (percentage >= 65) {
+                return { grade: 'مقبول مرتفع', symbol: 'D+', class: 'grade-acceptable-high', cardClass: 'acceptable-high', icon: '🌱', title: 'لازم تشتغل أكتر', text: 'مجموعك مقبول، وده معناه إن عندك إمكانيات كبيرة بس محتاج تبزل مجهود أكتر. ركز على نقاط ضعفك وإن شاء الله المرة الجاية هتكون أحسن.' };
+            } else if (percentage >= 60) {
+                return { grade: 'مقبول', symbol: 'D', class: 'grade-acceptable', cardClass: 'acceptable', icon: '📚', title: 'محتاج مجهود أكبر', text: 'النتيجة مقبولة لكن محتاجة شغل أكتر. حدد أهدافك وخطط لدراستك بشكل أفضل. كل خطوة بتعديها بتقربك من النجاح الأكبر.' };
+            } else {
+                return { grade: 'راسب', symbol: 'F', class: 'grade-fail', cardClass: 'fail', icon: '💫', title: 'متفقدش الأمل', text: 'الفشل مش نهاية الطريق، ده بداية رحلة جديدة. كل ناجح مرّ بلحظات صعبة زي دي. استمر في المحاولة، تعلم من أخطائك، وإن شاء الله النجاح جاي. إنت أقوى من أي صعوبة!' };
+            }
+        }
+
+        function calculate() {
+            const scoreInput = document.getElementById('score');
+            const score = parseFloat(scoreInput.value);
+            const resultSection = document.getElementById('resultSection');
+            const percentageValue = document.getElementById('percentageValue');
+            const gradeValue = document.getElementById('gradeValue');
+            const progressRing = document.getElementById('progressRing');
+            const messageCard = document.getElementById('messageCard');
+            const messageIcon = document.getElementById('messageIcon');
+            const messageTitle = document.getElementById('messageTitle');
+            const messageText = document.getElementById('messageText');
+
+            if (isNaN(score) || score < 0) {
+                alert('من فضلك أدخل مجموع صحيح');
+                return;
+            }
+
+            if (score > 400) {
+                alert('المجموع الأقصى هو 400');
+                return;
+            }
+
+            const percentage = (score / 400) * 100;
+            const roundedPercentage = Math.round(percentage * 100) / 100;
+            const result = getGrade(percentage);
+
+            resultSection.classList.add('active');
+
+            let current = 0;
+            const increment = roundedPercentage / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= roundedPercentage) {
+                    current = roundedPercentage;
+                    clearInterval(timer);
+                }
+                percentageValue.textContent = current.toFixed(1) + '%';
+            }, 30);
+
+            const circumference = 2 * Math.PI * 70;
+            const offset = circumference - (percentage / 100) * circumference;
+            setTimeout(() => {
+                progressRing.style.strokeDashoffset = offset;
+            }, 100);
+
+            gradeValue.innerHTML = result.grade + '<span class="grade-symbol">' + result.symbol + '</span>';
+            gradeValue.className = 'grade-value ' + result.class;
+
+            messageCard.className = 'message-card ' + result.cardClass;
+            messageIcon.textContent = result.icon;
+            messageTitle.textContent = result.title;
+            messageText.textContent = result.text;
+
+            if (percentage >= 70) {
+                createConfetti();
+            }
+
+            setTimeout(() => {
+                resultSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 300);
+        }
+
+        function createConfetti() {
+            const confettiContainer = document.getElementById('confetti');
+            confettiContainer.innerHTML = '';
+            const colors = ['#00d4ff', '#7b2ff7', '#00ff88', '#ffc800', '#ff6b6b', '#ffffff'];
+
+            for (let i = 0; i < 60; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'confetti-piece';
+                piece.style.left = Math.random() * 100 + '%';
+                piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                piece.style.animationDelay = Math.random() * 2 + 's';
+                piece.style.animationDuration = (2 + Math.random() * 2) + 's';
+                piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                piece.style.width = (5 + Math.random() * 10) + 'px';
+                piece.style.height = (5 + Math.random() * 10) + 'px';
+                confettiContainer.appendChild(piece);
+            }
+
+            setTimeout(() => {
+                confettiContainer.innerHTML = '';
+            }, 5000);
+        }
+
+        document.getElementById('score').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculate();
+            }
+        });
+    </script>
+</body>
+</html>
